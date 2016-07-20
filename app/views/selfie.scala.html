@@ -1,0 +1,71 @@
+@()
+<div id="selfie" class="fullHeight flexRowDiv">
+
+    <h5 id="tt"></h5>
+    <div class="canvasLayer" width="640" height="480">
+        <video autoplay="true" id="videoElement" class="invisible" width="640" height="480"></video>
+        <canvas id="canvas" class="posAbs" width="640" height="480"> </canvas>
+        <canvas id="canvasHelper" class="posAbs" width="640" height="480" > </canvas>
+
+    </div>
+
+
+    <div class="flexRow">
+        <div id="Photo" class="spaceAround" onclick="countDown()"></div>
+        <div id="Continue" class="spaceAround" onclick="goForward()"></div>
+
+    </div>
+
+
+
+</div>
+
+
+<script type="text/javascript">
+
+        var video = document.querySelector("#videoElement");
+        var canvas = document.querySelector("#canvas");
+        var canvasHelper = document.querySelector("#canvasHelper");
+        startCamera(video,canvas);
+        $("#Continue").hide()
+
+
+
+        var context = canvasHelper.getContext("2d")
+        var w = canvas.width
+        var h = canvas.height
+        context.ellipse(w/2,h/2,w/3,h/2-10,0,0,360);
+        context.lineWidth = 5;
+        context.strokeStyle = 'red';
+        context.stroke();
+
+        var pressed = false;
+        function countDown() {
+            if(pressed) return;
+            pressed = true;
+            $("#Photo").css('background-image','url(/assets/images/number-three-in-a-circle.svg)')
+            setTimeout(function () {
+
+                $("#Photo").css('background-image','url(/assets/images/number-two-in-a-circle.svg)')
+
+                setTimeout(function () {
+                    $("#Photo").css('background-image', 'url(/assets/images/number-one-in-a-circle.svg)')
+
+                    setTimeout(function () {
+                        $("#Photo").css('background-image', 'url(/assets/images/photographer-camera.svg)')
+                        takeAndPut(sessionUpdate);
+                        $("#Continue").show()
+                        pressed=false
+
+                    },1000)
+
+                },1000)
+
+            },1000)
+        }
+
+
+        function goForward(){
+            window.location.href = "#selectImage";
+        }
+</script>

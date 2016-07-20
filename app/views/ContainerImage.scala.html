@@ -1,0 +1,13 @@
+@import data.{FS, FSDirectory, FSImage}
+
+@(fs:List[FS])
+<div id = "imgContainer" class="imgContainer">
+    @for(file <- fs){
+        @file match {
+            case x:FSImage => { @ImageTemplate(x)}
+            case x:FSDirectory => { @DirectoryTemplate(x)}
+        }
+    }
+    <div id="Continue1" class="spaceAround" onclick="goForward1()"></div>
+
+</div>

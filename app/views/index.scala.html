@@ -1,7 +1,94 @@
-@(message: String)
-
+@(message: String)(implicit flash: Flash, request: RequestHeader)
 @main("Welcome to Play") {
 
-    <img src='@routes.Application.getImage()'/>
+    <img id="src" src='' width="100%" height="100%"/>
+
+    <video autoplay="true" id="videoElement" width="0px" height="0px"></video>
+
+    <canvas id="canvas" width="0" height="0"> </canvas>
+    <script type="text/javascript">
+
+             openVideo("#videoElement")
+            var video = document.querySelector("#videoElement");
+            var canvas = document.querySelector("#canvas");
+
+            var stop = false;
+            function timerCallback() {
+                if(stop) return
+                computeFrame();
+                setTimeout(function () {
+                    timerCallback();
+                }, 0);
+            }
+
+            function computeFrame (){
+                canvas.getContext('2d').drawImage(video, 0, 0,video.videoWidth , video.videoHeight);
+
+            }
+
+            function doMagic() {
+                $.ajax({
+                    type: "GET",
+                    url: "/getImage",
+                    contentType:"text/json",
+
+                    success:function(data) {
+                        console.log($("#src")[0],data)
+                         $("#src")[0].src = "data:image/png;base64," + data.image;
+                    }
+                });
+
+
+
+            }
+
+            timerCallback();
+            function take() {
+               stop = !stop;
+               timerCallback();
+
+            data = canvas.toDataURL();
+            var self = this
+
+            $.ajax({
+                type: "POST",
+                url: "/uppImage",
+                contentType:"text/plain",
+                data: data,
+                success:function(data) {
+
+
+
+                }
+            });
+
+           }
+
+
+
+           $(function () {
+            var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket
+            var sock = new WS("@routes.MorphingController.socket().webSocketURL()")
+               sock.onmessage = function(event,msg) {
+                   console.log(event)
+                   $("#src")[0].src = "data:image/png;base64," + JSON.parse(event.data).image;
+               }
+               sock.onopen= function () {
+                   sock.send(JSON.stringify({
+                       paths : ["/Users/bedux/Desktop/img/asjkdasd.jpg","/Users/bedux/Desktop/img/jaskhd.jpg"]
+                   }))
+
+
+               }
+           })
+
+
+    </script>
+
+    <input type="button" onclick="take()" value="Cliccs">
+    <input type="button" onclick="doMagic()" value="Morph">
+
 
 }
+
+

@@ -2,15 +2,19 @@ package logic.imageProcessing
 
 import java.util
 
+import akka.actor.ActorRef
 import org.opencv.core._
 import org.opencv.highgui.Highgui._
 import org.opencv.imgproc.Imgproc._
-
 import logic.imageProcessing.LandmarcFacePoint._
 import org.opencv.core.Core._
 import org.opencv.core.CvType._
-
 import org.opencv.highgui.Highgui
+import play.api.Logger
+import akka.actor._
+import data.ImageData
+import play.api.libs.json.Json
+
 
 /**
   * Created by bedux on 15/07/16.
@@ -20,55 +24,77 @@ import org.opencv.highgui.Highgui
   * A TuImage is compose by the image itself of type @See Mat and a Array of point that represent the key point of the face.
   * It can be construct using a path to an image or by pass an image and the points array
   */
-case class TuImage(image:Mat,points:Array[Array[Point]]) {
+
+
+case class TuImage(image:Mat,points:Array[Array[Point]],actorRef: Option[ActorRef]) {
 
   import scala.collection.JavaConversions._
+
 
   /*
     Create a debug image
    */
 
-  val debugImage:Mat = image.clone()
+  lazy val debugImage:Mat = {
+    Logger.logger.debug("Load debug Image")
+    val th = image.clone()
+    if(!points.isEmpty){
+      var i = 0;
+      //start drawing all found points
+      points.foreach(_.foreach(p => {
+        circle(th, p, 3, new Scalar(255, 255, 0))
+        putText(th, i.toString, p, 2, 0.4, new Scalar(255, 0, 255))
+        i += 1
+      }))
 
-  var i = 0
 
-  //start drawing all found points
-  points.foreach(_.foreach(p=>
-                                {
-                                  circle(debugImage,p,3,new Scalar(255,255,0))
-                                  putText(debugImage,i.toString,p,2,0.4,new Scalar(255,0,255))
-                                  i+=1
-                                }))
+      for (i <- 0 until Tools.triangleList.length by 3) {
+        if (Tools.triangleList(i) < points(0).length && Tools.triangleList(i + 1) < points(0).length && Tools.triangleList(i + 2) < points(0).length) {
+          val c: List[MatOfPoint] = List(
+            new MatOfPoint(points(0)(Tools.triangleList(i)), points(0)(Tools.triangleList(i + 1)), points(0)(Tools.triangleList(i + 2))))
+
+          polylines(th, c, true, new Scalar(0, 0, 255))
+          //  fillPoly(debugImage,c,new Scalar(255,255,255,2))
+
+        }
 
 
-  for(i<-0 until Tools.triangleList.length by 3){
-    if(Tools.triangleList(i)<points(0).length && Tools.triangleList(i+1)<points(0).length && Tools.triangleList(i+2)<points(0).length) {
-        val c: List[MatOfPoint] = List(
-          new MatOfPoint(points(0)(Tools.triangleList(i)),points(0)(Tools.triangleList(i + 1)),points(0)(Tools.triangleList(i + 2))))
-
-      polylines(debugImage,c,true, new Scalar(0,0,255))
-   //  fillPoly(debugImage,c,new Scalar(255,255,255,2))
+      }
 
     }
+  th
 
-
-  }
-
-
+}
 
   def +(im1:TuImage):TuImage = {
 
+
+    val currActorRef  = if(im1.actorRef.isDefined)  im1.actorRef else actorRef
+
+
+    if(im1.points.length==0) return this
+    if(this.points.length==0) return im1
+
     val alpha = 0.5
-    val sizeW = if  (image.size().width >im1.image.size().width)
-                                                        image.size().width
-                 else im1.image.size().width
-    val sizeH = if  (image.size().height >im1.image.size().height)
-                        image.size().height
-                else im1.image.size().height
 
-    val imgMorph:Mat = Mat.zeros(new Size(sizeW,sizeH), CV_32FC3)
+    val sizeW = if(image.size().width >im1.image.size().width)
+                      image.size().width
+                 else
+                      im1.image.size().width
 
-    val pt:Array[Point]  = weightedAverage(points(0),im1.points(0),alpha)
+    val sizeH = if(image.size().height >im1.image.size().height)
+                    image.size().height
+                else
+                    im1.image.size().height
+
+    val imgMorph:Mat = Mat.ones(new Size(sizeW,sizeH), CV_32FC3)
+    imgMorph.setTo(new Scalar(255,255,255))
+    val pt:Array[Point]  = weightedAverage(points(0),im1.points(0),alpha,
+      (1-alpha)*image.width()+alpha*image.width(),
+      (1-alpha)*image.height()+alpha*image.height(),
+      sizeW,
+      sizeH
+    )
 
     image.convertTo(image, CV_32F)
     im1.image.convertTo(im1.image, CV_32F)
@@ -88,11 +114,19 @@ case class TuImage(image:Mat,points:Array[Array[Point]]) {
 
           morphTriangle(image, im1.image, imgMorph, t1, t2, t, alpha);
 
+
+          if(currActorRef.isDefined) {
+            import data.ImageDataInpl.locationImageData
+            currActorRef.get ! (Json.stringify(Json.toJson(ImageData(Tools.getByte(imgMorph)(".png")))))
+
+          }
+
         }
 
       val result:Array[Array[Point]] = new Array[Array[Point]](1)
       result(0) = pt
-      new TuImage(imgMorph,result)
+
+      new TuImage(imgMorph,result,None)
     }
 
 
@@ -102,7 +136,7 @@ case class TuImage(image:Mat,points:Array[Array[Point]]) {
     * @param tuImg
     */
   def this(tuImg:TuImage) {
-    this(tuImg.image,tuImg.points)
+    this(tuImg.image,tuImg.points,None)
   }
 
   /**
@@ -123,11 +157,16 @@ case class TuImage(image:Mat,points:Array[Array[Point]]) {
 
 
   //compute weighted average point coordinates
-  def  weightedAverage(p1:Array[Point],p2:Array[Point],alpha:Double):Array[Point] ={
+  def  weightedAverage(p1:Array[Point],p2:Array[Point],alpha:Double,maxW:Double,maxH:Double,dmaxW:Double,dmaxH:Double):Array[Point] ={
     val result = new Array[Point](p1.length)
     for(i<-0 until p1.length){
       val x = (1.0 - alpha) * p1(i).x + alpha * p2(i).x
+
       val y =  ( 1.0 - alpha ) * p1(i).y + alpha * p2(i).y
+
+
+
+
       result(i)= new Point(x,y)
     }
     result
@@ -144,6 +183,7 @@ case class TuImage(image:Mat,points:Array[Array[Point]]) {
     // Apply the Affine Transform just found to the src image
     warpAffine( src, warpImage, warpMat, warpImage.size())
   }
+
 
 
   def morphTriangle(img1:Mat,img2:Mat,img:Mat,t1: MatOfPoint,t2: MatOfPoint,t: MatOfPoint ,alpha:Double): Unit ={
@@ -173,7 +213,7 @@ case class TuImage(image:Mat,points:Array[Array[Point]]) {
 
 
     val mask:Mat = Mat.zeros(r.height, r.width, CV_8UC1)
-    fillConvexPoly(mask, tRectIntMat, new Scalar(1.0, 1.0, 1.0), 8, 0);
+    fillConvexPoly(mask, tRectIntMat, new Scalar(1.0, 1.0, 1.0), 16, 0);
 
     val tRectIntMat2df:MatOfPoint2f = new MatOfPoint2f()
     tRectIntMat2df.fromList(tRectInt)
@@ -244,6 +284,11 @@ object Tools {
 
   def getKeyPoint(src:String,mat:Mat): Array[Array[Point]] = {
     val resPoint:Array[Array[Point]] = getFaceKeyPoint(src)
+
+    println("Is empty = ",resPoint.isEmpty)
+    if(resPoint.isEmpty) return resPoint
+
+
     val plus8:Array[Array[Point]]  = new Array(resPoint.length)
 
     plus8(0) = new Array[Point](resPoint(0).length+16)
@@ -284,7 +329,13 @@ object Tools {
     val m : Mat = imread(path)
     val r:Array[Array[Point]]= Tools.getKeyPoint(path,m)
     //load the image and get the point
-    new TuImage(m, r)
+    new TuImage(m, r,None)
+  }
+  def TuImage(path:String,actorRef: ActorRef):TuImage ={
+    val m : Mat = imread(path)
+    val r:Array[Array[Point]]= Tools.getKeyPoint(path,m)
+    //load the image and get the point
+    new TuImage(m, r,Some(actorRef))
   }
 
 

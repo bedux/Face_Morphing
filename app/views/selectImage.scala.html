@@ -1,0 +1,50 @@
+@()
+<div id="selectImage" class="fullHeight flexRow">
+
+    <script type="text/javascript">
+
+            getListFile(renderImages)
+
+    var old =[];
+
+    function display(img){
+        old.push( document.getElementById("imgContainer").innerHTML)
+        document.getElementById("imgContainer").innerHTML = $("#"+img).html()
+    }
+
+    function back(){
+        if(old.length>0)
+            document.getElementById("imgContainer").innerHTML  = old.pop();
+    }
+    function renderImages(json){
+
+
+             document.getElementById("selectImage").innerHTML=(json)
+    }
+
+        function selected(path,img) {
+
+            if(sessionUpdate.indexOf(path)!=-1){
+               sessionUpdate.splice(sessionUpdate.indexOf(path),1)
+                img.style.borderStyle="none"
+
+            } else{
+                sessionUpdate.push(path)
+                img.style.borderStyle="solid"
+                img.style.borderColor= "red"
+                img.style.borderWidth="3px"
+            }
+            console.log(sessionUpdate)
+
+
+
+        }
+            function goForward1(){
+                window.location.href = "#morph";
+                uploadAndDo()
+            }
+    </script>
+
+
+</div>
+

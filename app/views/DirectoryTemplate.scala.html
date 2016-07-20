@@ -1,0 +1,21 @@
+@import data.{FS, FSDirectory, FSImage}
+
+@(fsDir:FSDirectory)
+<div class="directory" onclick="display('@fsDir.name.replace('.','_').replace('/','_')')">
+
+
+   <div id="@fsDir.name.replace('.','_').replace('/','_')" class="invisible " >
+   @for(file <- fsDir.files){
+       @file match {
+           case x:FSImage => { @ImageTemplate(x)}
+           case x:FSDirectory => { @views.html.DirectoryTemplate(x)}
+       }
+   }
+       <div onclick="back()" class = "back">
+
+           </div>
+   </div>
+
+
+
+</div>

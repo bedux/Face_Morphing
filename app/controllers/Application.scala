@@ -4,28 +4,22 @@ package controllers
 import java.awt.image.{BufferedImage, DataBufferByte, DataBufferInt}
 import java.io.{ByteArrayInputStream, File, FileOutputStream}
 
-import akka.util.ByteString
-import org.opencv.core._
-import org.opencv.highgui.Highgui
-import org.opencv.core.Core._
-import org.opencv.core.CvType._
-import org.opencv.core.Point._
-import org.opencv.imgproc.Imgproc._
-import org.opencv.highgui.Highgui._
-import play.api._
-import play.api.http.HttpEntity
+import play.api.libs.json._
+import data.{ImageData, ImagePath}
 import play.api.mvc._
-import logic.imageProcessing.LandmarcFacePoint._
 import logic.imageProcessing.{Tools, TuImage}
+
+import scala.util.Random
 
 class Application extends Controller {
 
-  def index = Action {
+  def index = Action {implicit request =>
 
-    Ok(views.html.index("Your new application is ready."))
+  Ok(views.html.index("Your new application is ready."))
   }
 
   def getImage = Action{
+
     var img:TuImage =null
 
     for (file <- new File("/Users/bedux/Desktop/img/").listFiles) {
@@ -41,7 +35,31 @@ class Application extends Controller {
       }
 
     }
-    Ok(img.getByte()).as("image/png")
+    import data.ImageDataInpl.locationImageData
+    val json  = Json.toJson(ImageData(img.getByte()))
+    Ok(json).as("text/json")
   }
+
+
+
+
+
+  def uppImage = Action(parse.text(maxLength = 1024 * 1024)){
+    request => {
+      println(request.cookies.toList)
+
+      val img64: String = request.body
+      val btDataFile: Array[Byte] = new sun.misc.BASE64Decoder().decodeBuffer(img64.replace("data:image/png;base64,", ""))
+      val of: File = new File("photo/" + Random.alphanumeric.take(30).mkString + ".png")
+      val osf: FileOutputStream = new FileOutputStream(of)
+      osf.write(btDataFile)
+      osf.flush()
+      import data.ImageDataInpl.locationImagePath
+
+      Ok(Json.toJson(ImagePath(of.getCanonicalPath)))
+    }
+  }
+
+
 
 }

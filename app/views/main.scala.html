@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String)(content: Html)(implicit request: RequestHeader)
 
 <!DOCTYPE html>
 
@@ -8,8 +8,23 @@
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/webcam.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/request.js")" type="text/javascript"></script>
+
+        @*<script src="@routes.Assets.at("javascripts/model_pca_20_svm_emotionDetection.js")" type="text/javascript"></script>*@
+        @*<script src="@routes.Assets.at("javascripts/clmtrackr.min.js")" type="text/javascript"></script>*@
+        @*<script src="@routes.Assets.at("javascripts/emotion_classifier.js")" type="text/javascript"></script>*@
+        @*<script src="@routes.Assets.at("javascripts/emotionmodel.js")" type="text/javascript"></script>*@
+
+        <script src="//js.leapmotion.com/0.3.0-beta3/leap.min.js" type="text/javascript"></script>
+        <script src="//js.leapmotion.com/leap-0.6.3.min.js" type="text/javascript"></script>
+                <script src="@routes.Assets.at("javascripts/gesture.js")" type="text/javascript"></script>
+
+
     </head>
     <body>
-        @content
+        @selfie()
+        @selectImage()
+        @morph(request)
     </body>
 </html>

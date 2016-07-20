@@ -1,0 +1,30 @@
+@(implicit request: RequestHeader)
+
+<div id="morph" class="fullHeight flexRow">
+    <img id="src" src='' />
+    <script>
+
+            function uploadAndDo() {
+
+                var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket
+                var sock = new WS("@routes.MorphingController.socket().webSocketURL()")
+                sock.onmessage = function(event) {
+                   $("#src")[0].src = "data:image/png;base64," + JSON.parse(event.data).image;
+                }
+                sock.onopen= function () {
+                    console.log("Open")
+                    sock.send(JSON.stringify({
+                        paths :sessionUpdate
+                    }))
+
+
+                }
+                sock.onerror = function (e) {
+                    console.log(e+"asdasd")
+                }
+
+            }
+
+
+    </script>
+</div>
