@@ -53,7 +53,9 @@ function takeAndPut(array) {
     data = canvas.toDataURL();
     postImage(data,function(respData){
         array.push(respData.path)
+        addRowImage(data,respData.path)
     })
+    
 }
 
 

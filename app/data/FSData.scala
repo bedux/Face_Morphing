@@ -12,7 +12,7 @@ sealed trait  FS {
     def name:String
 }
 
-case class FSDirectory( override val name:String,val files:List[FS]) extends FS{
+case class FSDirectory( override val name:String,val files:List[FS],val backImg:Option[String]) extends FS{
 }
 
 case class FSImage( override val name:String) extends FS{

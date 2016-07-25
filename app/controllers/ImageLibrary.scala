@@ -3,8 +3,7 @@ package controllers
 import java.io.File
 
 import data.{FS, FSDirectory, FSImage}
-import logic.imageProcessing.Tools
-import play.api.libs.json.Json
+
 import play.api.mvc.{Action, Controller}
 import views.html.ContainerImage
 
@@ -27,7 +26,13 @@ class ImageLibrary extends Controller {
     }else if(head.isDirectory){
 
       val fileInside:List[FS] = getListOfFile(head.listFiles().toList)
-      val directory:FSDirectory =  FSDirectory(head.getPath,fileInside)
+      val fileCover = fileInside.filter(_.name.contains("cover.")).headOption
+
+      val coverName:Option[String] = if(fileCover.isDefined) Some(fileCover.get.name) else None
+
+      val directory:FSDirectory =  FSDirectory(head.getPath,fileInside,coverName)
+
+
       val listRemain:List[FS] =  getListOfFile(tail)
 
       return listRemain:+directory
@@ -36,10 +41,9 @@ class ImageLibrary extends Controller {
     getListOfFile(tail)
   }
 
+  //Get the list of all the images as html
   def getImage = Action {
     val files:List[FS] = getListOfFile( new File("./public/img").listFiles.toList)
-
-    import data.FSImplicit._
     Ok(ContainerImage(files))
   }
 

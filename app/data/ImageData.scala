@@ -5,7 +5,7 @@ import play.api.libs.functional.syntax._
 /**
   * Created by bedux on 18/07/16.
   */
-case class ImageData(image:Array[Byte]){
+case class ImageData(image:Array[Byte],isLast: Boolean = false){
 
 }
 
@@ -17,7 +17,8 @@ object ImageDataInpl {
   implicit val locationImageData: Writes[ImageData] =
   new Writes[ImageData] {
     def writes(resident: ImageData) = Json.obj(
-      "image" -> BaseEncoding.base64().encode(resident.image)
+      "image" -> BaseEncoding.base64().encode(resident.image),
+      "isLast" -> resident.isLast
 
     )
   }

@@ -26,7 +26,7 @@ import play.api.libs.json.Json
   */
 
 
-case class TuImage(image:Mat,points:Array[Array[Point]],actorRef: Option[ActorRef]) {
+case class TuImage(image:Mat,points:Array[Array[Point]],actorRef: Option[ActorRef],n:Double=1.0) {
 
   import scala.collection.JavaConversions._
 
@@ -75,20 +75,20 @@ case class TuImage(image:Mat,points:Array[Array[Point]],actorRef: Option[ActorRe
     if(im1.points.length==0) return this
     if(this.points.length==0) return im1
 
-    val alpha = 0.5
+    val alpha = 1-(n/(n+im1.n))
+    println(alpha)
 
     val sizeW = if(image.size().width >im1.image.size().width)
                       image.size().width
                  else
                       im1.image.size().width
 
-    val sizeH = if(image.size().height >im1.image.size().height)
+    val sizeH = if(image.size().height > im1.image.size().height)
                     image.size().height
                 else
                     im1.image.size().height
 
     val imgMorph:Mat = Mat.ones(new Size(sizeW,sizeH), CV_32FC3)
-    imgMorph.setTo(new Scalar(255,255,255))
     val pt:Array[Point]  = weightedAverage(points(0),im1.points(0),alpha,
       (1-alpha)*image.width()+alpha*image.width(),
       (1-alpha)*image.height()+alpha*image.height(),
@@ -126,7 +126,7 @@ case class TuImage(image:Mat,points:Array[Array[Point]],actorRef: Option[ActorRe
       val result:Array[Array[Point]] = new Array[Array[Point]](1)
       result(0) = pt
 
-      new TuImage(imgMorph,result,None)
+      new TuImage(imgMorph,result,None,n+im1.n)
     }
 
 
@@ -283,7 +283,7 @@ object Tools {
 
 
   def getKeyPoint(src:String,mat:Mat): Array[Array[Point]] = {
-    val resPoint:Array[Array[Point]] = getFaceKeyPoint(src)
+    val resPoint:Array[Array[Point]] = CacheLandMarc.getPointOf(src).toListOfPoint()
 
     println("Is empty = ",resPoint.isEmpty)
     if(resPoint.isEmpty) return resPoint
@@ -326,16 +326,22 @@ object Tools {
     *
     */
   def TuImage(path:String):TuImage ={
+
     val m : Mat = imread(path)
     val r:Array[Array[Point]]= Tools.getKeyPoint(path,m)
     //load the image and get the point
     new TuImage(m, r,None)
   }
   def TuImage(path:String,actorRef: ActorRef):TuImage ={
+
     val m : Mat = imread(path)
     val r:Array[Array[Point]]= Tools.getKeyPoint(path,m)
     //load the image and get the point
-    new TuImage(m, r,Some(actorRef))
+    val tuImage = new TuImage(m, r,Some(actorRef))
+
+    import data.ImageDataInpl.locationImageData
+    actorRef ! (Json.stringify(Json.toJson(ImageData(tuImage.getByteDebugImage()))))
+    tuImage
   }
 
 

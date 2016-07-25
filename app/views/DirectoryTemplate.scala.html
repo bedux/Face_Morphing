@@ -1,7 +1,10 @@
 @import data.{FS, FSDirectory, FSImage}
 
 @(fsDir:FSDirectory)
-<div class="directory" onclick="display('@fsDir.name.replace('.','_').replace('/','_')')">
+
+
+<div class="directory" onclick="display('@fsDir.name.replace('.','_').replace('/','_')')"
+    style="background-image:url(@fsDir.backImg.getOrElse("'/assets/images/folder.png'"))" >
 
 
    <div id="@fsDir.name.replace('.','_').replace('/','_')" class="invisible " >

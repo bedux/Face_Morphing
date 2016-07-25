@@ -1,30 +1,67 @@
 @(implicit request: RequestHeader)
 
-<div id="morph" class="fullHeight flexRow">
+<div id="morph" class="fullHeight flexRowDiv">
     <img id="src" src='' />
+    <div class="flexRow">
+    <div id="Continue2" class="spaceAround" onclick="restart()"></div>
+    <div id="Continue3" class="spaceAround" onclick="backSame()"></div>
+    </div>
     <script>
+            //Hide the previews pages
+            $("#morph").hide();
+            $("#Continue2").hide();
+            $("#Continue3").hide();
 
+
+            //Get the merged image from the server, use web socket to send chunk of image
             function uploadAndDo() {
 
                 var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket
                 var sock = new WS("@routes.MorphingController.socket().webSocketURL()")
+
                 sock.onmessage = function(event) {
-                   $("#src")[0].src = "data:image/png;base64," + JSON.parse(event.data).image;
-                }
+
+                    var jsonData = JSON.parse(event.data);
+
+                    //upload the image div with the new image
+                    if(jsonData.image){
+                        $("#src")[0].src = "data:image/png;base64," + jsonData.image;
+                    }
+
+                    //if is the last image, close the web socket connection and show the continue button
+                    if(jsonData.isLast){
+                        sock.close()
+                        $("#Continue2").show()
+                        $("#Continue3").show();
+
+                    }
+                };
+
+                //when socket is open, send the image to be morphed
                 sock.onopen= function () {
-                    console.log("Open")
                     sock.send(JSON.stringify({
                         paths :sessionUpdate
                     }))
 
 
                 }
-                sock.onerror = function (e) {
-                    console.log(e+"asdasd")
-                }
 
             }
 
+            //Restart the application from beginning
+            function restart(){
+                location.reload();
+                window.location.href = "#";
+                location.reload();
 
+            }
+
+        //Return to the selectImage page
+        function backSame() {
+            $("#selectImage").show();
+            $("#morph").hide();
+            $("#selfie").hide();
+        }
     </script>
+
 </div>

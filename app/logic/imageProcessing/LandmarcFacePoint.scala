@@ -1,6 +1,6 @@
 package logic.imageProcessing
-import jdk.nashorn.internal.objects.Global
-import org.opencv.core.Point
+import data.LandmarkPointData
+
 import play.api.libs.json.{JsValue, Json}
 
 
@@ -17,12 +17,11 @@ object LandmarcFacePoint {
     * @param fileName the file that should  be analyzed
     * @return the array of faces with the point for each face
     */
-  def getFaceKeyPoint(fileName:String):Array[Array[Point]] = {
+  def getFaceKeyPoint(fileName:String):LandmarkPointData = {
     val res: String = (scriptPath + " "+ dataSetPath +"  " + fileName).!!
-    println(res)
     val json:JsValue = Json.parse(res)
     val result = json.as[Array[Array[Array[Int]]]]
-    result.map(x => x.map(y => new Point(y(0),y(1))))
+    LandmarkPointData(result,fileName)
   }
 
 

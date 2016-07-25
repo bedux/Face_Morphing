@@ -14,7 +14,6 @@ import play.api.mvc.WebSocket
 class MorphingController @Inject() (implicit system: ActorSystem, materializer: Materializer) {
 
   def socket = WebSocket.accept[String, String] { request =>
-    println("New User")
     ActorFlow.actorRef(out => MorphActorObj.props(out))
   }
 }

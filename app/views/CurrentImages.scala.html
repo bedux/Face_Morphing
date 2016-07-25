@@ -1,0 +1,55 @@
+@()
+
+    <div id="ImageSelected">
+        <div class="imageDiv" style="height: 100%; background: whitesmoke; left:0px; margin-left: 0px; padding-left: 10px;     align-self:center;">
+            <h4>Immagini Selezionate:</h4>
+        </div>
+
+    </div>
+
+<script>
+
+        // rendered element
+        var elemens = {};
+
+        //Add a normal image using a a global path
+        function addImage(path,img) {
+            var nImg =   $('<div class="imageDiv" onclick=removeFM("'+path+'") >'+
+                    '<img src="'+path+' ">'+
+            '</div>');
+            elemens[path] = [nImg,img,false]
+            $("#ImageSelected").append(nImg)
+        }
+
+        //remove image by press on the selectImage
+        function remove(path) {
+            elemens[path][0].hide()
+
+
+        }
+
+        //remove image by  press on the bar
+        function removeFM(path){
+            selected(path,elemens[path][1])
+
+        }
+
+        //remove a row image (selfie)
+        function removeRaw(name){
+            sessionUpdate.splice(sessionUpdate.indexOf(name),1)
+            elemens[name][0].hide()
+
+
+            console.log(sessionUpdate)
+        }
+
+        //add a row image (selfie)
+        function addRowImage(raw,name){
+            var nImg =   $('<div class="imageDiv" onclick=removeRaw("'+name+'") >'+
+                    '<img src="'+raw+' ">'+
+                    '</div>');
+            elemens[name] = [nImg,name,false]
+            $("#ImageSelected").append(nImg)
+        }
+
+</script>
