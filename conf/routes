@@ -16,3 +16,5 @@ POST /uppImage                      controllers.Application.uppImage
 GET /getImageWS                      controllers.MorphingController.socket
 
 GET /listImages                         controllers.ImageLibrary.getImage
+
+POST /mailTo                             @controllers.Mail.sendImageByMail

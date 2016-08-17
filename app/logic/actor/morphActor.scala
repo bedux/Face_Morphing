@@ -25,13 +25,19 @@ class MorphActor(out: ActorRef) extends Actor {
   def sumImages(images:Array[String]) ={
 
     val imageSeq:ParSeq[TuImage] = images.toSeq.map(x=>Tools.TuImage(x,out)).par
-    val result:TuImage = imageSeq.reduce(_ + _)
-    import data.ImageDataInpl.locationImageData
-    out ! (Json.stringify(Json.toJson(ImageData(result.getByte(),true))))
+    try{
+      val result:TuImage = imageSeq.reduce(_ + _)
+      import data.ImageDataInpl.locationImageData
+      out ! (Json.stringify(Json.toJson(ImageData(result.getByte(),true))))
+
+    }catch  {
+      case x =>
+      import data.ImageDataInpl.locationImageData
+      out ! (Json.stringify(Json.toJson(ImageData(imageSeq.head.getByte(),true))))
+    }
 
   }
   override def postStop() = {
 
-println("Cloase")
   }
 }

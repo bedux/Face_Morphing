@@ -12,3 +12,5 @@ libraryDependencies ++= Seq( jdbc , cache , ws   , specs2 % Test )
 libraryDependencies ++= Seq(
   ws
 )
+
+libraryDependencies +=   "com.typesafe.play" %% "play-mailer" % "5.0.0"

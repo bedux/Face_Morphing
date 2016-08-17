@@ -44,6 +44,13 @@ html, body {
     width: 100px;
     height:100px;
 }
+
+#Continue4{
+     background-image: url("/assets/images/mail.svg");
+     background-size:cover;
+     width: 100px;
+     height:100px;
+ }
 #Continue3{
     background-image: url("/assets/images/photographer-camera.svg");
     background-size:cover;
@@ -153,5 +160,20 @@ html, body {
 
     max-width: 100px;
     max-height: 100%;
+
+}
+#cursor{
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    position: fixed;
+}
+
+#popUpMail{
+    display: none;
+    position: absolute;
+    margin: auto;
+    padding: 30px;
+    background-color: #000000;
 
 }

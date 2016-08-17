@@ -76,7 +76,7 @@ case class TuImage(image:Mat,points:Array[Array[Point]],actorRef: Option[ActorRe
     if(this.points.length==0) return im1
 
     val alpha = 1-(n/(n+im1.n))
-    println(alpha)
+
 
     val sizeW = if(image.size().width >im1.image.size().width)
                       image.size().width
@@ -285,7 +285,6 @@ object Tools {
   def getKeyPoint(src:String,mat:Mat): Array[Array[Point]] = {
     val resPoint:Array[Array[Point]] = CacheLandMarc.getPointOf(src).toListOfPoint()
 
-    println("Is empty = ",resPoint.isEmpty)
     if(resPoint.isEmpty) return resPoint
 
 
@@ -391,8 +390,6 @@ object Tools {
   62, 66, 67,
   48, 4 , 3,
   41, 2 , 1,
-    83, 2 , 1,
-
     31, 3 , 2,
   37, 40, 41,
   39, 29, 40,
@@ -457,6 +454,8 @@ object Tools {
   16, 45, 26,
   15, 14, 45,
   45, 25, 26,
+    //END FACE
+     83, 2 , 1,
     20,70,23,
     19,70,20,
     19,70,69,
@@ -497,31 +496,5 @@ object Tools {
     71,70,25,
     23,24,70,
     25,71,72
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   )
 }

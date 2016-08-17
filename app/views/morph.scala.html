@@ -5,12 +5,29 @@
     <div class="flexRow">
     <div id="Continue2" class="spaceAround" onclick="restart()"></div>
     <div id="Continue3" class="spaceAround" onclick="backSame()"></div>
+        <div id="Continue4" class="spaceAround" onclick="openPopUp()">
+
+    </div>
+
+    </div>
+
+    <div id="popUpMail">
+        <input id="mail" type="email" placeholder="insert your e-mail">
+        <input type="button" value="Send!" onclick="sendMail()">
+
     </div>
     <script>
             //Hide the previews pages
-            $("#morph").hide();
-            $("#Continue2").hide();
-            $("#Continue3").hide();
+            initMorphPage()
+
+           function initMorphPage() {
+               $("#morph").hide();
+               $("#Continue2").hide();
+               $("#Continue3").hide();
+               $("#Continue4").hide();
+               $("#popUpMail").hide();
+           }
+
 
 
             //Get the merged image from the server, use web socket to send chunk of image
@@ -33,6 +50,12 @@
                         sock.close()
                         $("#Continue2").show()
                         $("#Continue3").show();
+                        $("#Continue4").show();
+
+
+
+
+
 
                     }
                 };
@@ -61,6 +84,43 @@
             $("#selectImage").show();
             $("#morph").hide();
             $("#selfie").hide();
+        }
+
+
+            function sendMail() {
+                console.log("Sending to ",$("#mail").val())
+                sendByMail($("#mail").val())
+                $("#popUpMail").hide();
+                $("#Continue4").hide();
+
+            }
+        function sendByMail(mail){
+            var dat =  $("#src")[0].src
+            console.log(dat)
+
+            $.ajax({
+                type: "POST",
+                url: "/mailTo",
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify({ image: dat, mail:mail}),
+
+                success:function(data) {
+
+
+
+                },
+                error:function(e){
+                    console.log(e)
+                }
+
+            })
+        }
+
+        function openPopUp() {
+            @*sendByMail('bedulm@@usi.ch')*@
+            $("#popUpMail").show();
+
         }
     </script>
 
