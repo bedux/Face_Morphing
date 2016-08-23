@@ -3,7 +3,9 @@ package logic.imageProcessing
 import java.io.File
 import java.nio.file.{Files, Path, Paths}
 
+import com.google.inject.Inject
 import data.LandmarkPointData
+import play.api.{Application, Play}
 import play.api.libs.json.{JsValue, Json}
 
 import scala.concurrent.Future
@@ -12,15 +14,19 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by bedux on 25/07/16.
   */
+import play.api.Play.current
 
-object CacheLandMarc{
+class CacheLandMarc(){
 
 
-  private val pathCacheDir:String = "./cachePoint"
+
+  private val pathCacheDir:String =  Play.getFile("cachePoint").getAbsolutePath
   private val dirPath:Path =  Paths.get(pathCacheDir)
+
 
   if(!Files.exists(dirPath)){
     Files.createDirectory(dirPath)
+
     println("create ")
   }else{
     println("Exist ")
@@ -36,6 +42,8 @@ object CacheLandMarc{
 
   }
 
+  println(pathCacheDir)
+
   private  val dirAsFile:File = new File(pathCacheDir)
 
   private var listOfAvailableFile:Map[String,LandmarkPointData] = dirAsFile.listFiles()
@@ -46,7 +54,7 @@ object CacheLandMarc{
                                                         })(collection.breakOut)
 
 
-  def runCacheOverAllImages(f:File): Future[Any] ={
+   def runCacheOverAllImages(f:File): Future[Any] ={
     val seq:List[Future[Any]]= f.listFiles().toList.map(
       x =>{
         if(x.isDirectory){
@@ -67,8 +75,8 @@ object CacheLandMarc{
 
 
   def hashName(string: String):String = {
-    if(string.lastIndexOf("public" )== -1) return string.replace("/","_")
-    string.substring(string.lastIndexOf("public")).replace("/","_")
+    if(string.lastIndexOf("public" )== -1) return string.replace(File.separator,"_")
+    string.substring(string.lastIndexOf("public")).replace(File.separator,"_")
   }
   def getPointOf(fileName:String):LandmarkPointData = {
     val fileKey:String = hashName(fileName)
@@ -84,7 +92,7 @@ object CacheLandMarc{
         listOfAvailableFile = listOfAvailableFile + (fileKey -> res)
         import LandmarkPointData._
         implicit val codec = Codec.UTF8
-        val fiel = new java.io.PrintWriter(pathCacheDir+"/"+fileKey+".json")
+        val fiel = new java.io.PrintWriter(pathCacheDir+File.separator+fileKey+".json")
         fiel.print( Json.stringify(Json.toJson(res)))
         fiel.close()
         res
@@ -92,5 +100,12 @@ object CacheLandMarc{
 
     }
   }
+
+}
+
+object CacheLandMarc{
+  lazy val -> =  new CacheLandMarc()
+//  def -> : CacheLandMarc = cacheLandMarc
+
 
 }

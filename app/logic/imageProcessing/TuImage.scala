@@ -10,10 +10,11 @@ import logic.imageProcessing.LandmarcFacePoint._
 import org.opencv.core.Core._
 import org.opencv.core.CvType._
 import org.opencv.highgui.Highgui
-import play.api.Logger
+import play.api.{Logger, Play}
 import akka.actor._
 import data.ImageData
 import play.api.libs.json.Json
+import play.api.Play.current
 
 
 /**
@@ -283,7 +284,7 @@ object Tools {
 
 
   def getKeyPoint(src:String,mat:Mat): Array[Array[Point]] = {
-    val resPoint:Array[Array[Point]] = CacheLandMarc.getPointOf(src).toListOfPoint()
+    val resPoint:Array[Array[Point]] = CacheLandMarc.->.getPointOf(src).toListOfPoint()
 
     if(resPoint.isEmpty) return resPoint
 
@@ -326,15 +327,31 @@ object Tools {
     */
   def TuImage(path:String):TuImage ={
 
-    val m : Mat = imread(path)
-    val r:Array[Array[Point]]= Tools.getKeyPoint(path,m)
+    val pathDef =if((path.indexOf("imageDataset")<=1) && (path.indexOf("imageDataset")!= -1)){
+      Play.getFile(path).getAbsolutePath
+    }else{
+      path
+    }
+
+    val m : Mat = imread(pathDef)
+    val r:Array[Array[Point]]= Tools.getKeyPoint(pathDef,m)
     //load the image and get the point
     new TuImage(m, r,None)
+
+
   }
   def TuImage(path:String,actorRef: ActorRef):TuImage ={
+    val pathDef = {
+      if ((path.indexOf("imageDataset") <= 1) && (path.indexOf("imageDataset") != -1)) {
+        Play.getFile(path).getAbsolutePath
+      } else {
+        path
+      }
+    }
 
-    val m : Mat = imread(path)
-    val r:Array[Array[Point]]= Tools.getKeyPoint(path,m)
+    println(pathDef,"Pathh")
+    val m : Mat = imread(pathDef)
+    val r:Array[Array[Point]]= Tools.getKeyPoint(pathDef,m)
     //load the image and get the point
     val tuImage = new TuImage(m, r,Some(actorRef))
 

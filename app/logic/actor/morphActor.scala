@@ -5,6 +5,7 @@ import logic.imageProcessing.{Tools, TuImage}
 import play.api.libs.json.{JsArray, JsValue, Json}
 
 import scala.collection.parallel.ParSeq
+import play.api.Play.current
 
 object MorphActorObj {
   def props(out: ActorRef) = Props(new MorphActor(out))

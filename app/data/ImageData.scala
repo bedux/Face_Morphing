@@ -1,7 +1,10 @@
 package data
 import com.google.common.io.BaseEncoding
+import play.api.libs.Files
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
+
+import scala.reflect.io.File
 /**
   * Created by bedux on 18/07/16.
   */
@@ -9,7 +12,9 @@ case class ImageData(image:Array[Byte],isLast: Boolean = false){
 
 }
 
-case class ImagePath(path:String){}
+case class ImagePath(path:String){
+
+}
 
 object ImageDataInpl {
 

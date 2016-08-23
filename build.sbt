@@ -1,3 +1,6 @@
+import com.typesafe.sbt.packager.MappingsHelper._
+
+
 name := "Tu1"
 
 version := "1.0"
@@ -14,3 +17,11 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies +=   "com.typesafe.play" %% "play-mailer" % "5.0.0"
+
+
+
+mappings in Universal ++= directory(baseDirectory.value / "imageDataset")
+
+mappings in Universal ++= directory(baseDirectory.value / "libs")
+
+routesGenerator := StaticRoutesGenerator

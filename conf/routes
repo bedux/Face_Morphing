@@ -3,18 +3,19 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
+GET     /                          @controllers.Application.index
 
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 GET     /public/*file               controllers.Assets.at(path="/public", file)
+GET     /imageDataset/*file         @controllers.StaticFile.html(file)
 
 
-POST /uppImage                      controllers.Application.uppImage
+POST /uppImage                      @controllers.Application.uppImage
 
-GET /getImageWS                      controllers.MorphingController.socket
+GET /getImageWS                     @controllers.MorphingController.socket
 
-GET /listImages                         controllers.ImageLibrary.getImage
+GET /listImages                      @controllers.ImageLibrary.getImage
 
-POST /mailTo                             @controllers.Mail.sendImageByMail
+POST /mailTo                          @controllers.Mail.sendImageByMail
