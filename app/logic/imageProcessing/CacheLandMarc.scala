@@ -43,6 +43,7 @@ class CacheLandMarc(){
   }
 
   println(pathCacheDir)
+    println(File.separator,"separator")
 
   private  val dirAsFile:File = new File(pathCacheDir)
 
@@ -75,12 +76,13 @@ class CacheLandMarc(){
 
 
   def hashName(string: String):String = {
-    if(string.lastIndexOf("public" )== -1) return string.replace(File.separator,"_")
-    string.substring(string.lastIndexOf("public")).replace(File.separator,"_")
+    println(File.separator,"separator")
+    if(string.lastIndexOf("public" )== -1) return string.replace(File.separator,"_").replace(":","")
+    string.substring(string.lastIndexOf("public")).replace(File.separator,"_").replace(":","")
   }
   def getPointOf(fileName:String):LandmarkPointData = {
     val fileKey:String = hashName(fileName)
-
+    println(fileKey,"fileKey")
     listOfAvailableFile get fileKey match {
       case x:Some[LandmarkPointData] =>
         {

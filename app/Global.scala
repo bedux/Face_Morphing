@@ -10,7 +10,7 @@ class Global extends GlobalSettings {
 
   override def beforeStart(app: Application) {
 
-    PlayNativeLibHack.load(app.getWrappedApplication.getFile("libs/libopencv_java2413.dylib").getPath)
+    PlayNativeLibHack.load(app.getWrappedApplication.getFile("libs/win/x64/opencv_java2413.dll").getPath)
     import play.api.Play.current
     CacheLandMarc.->.runCacheOverAllImages(Play.getFile("imageDataset")).onComplete(_=>println("Done"))
 

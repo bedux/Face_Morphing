@@ -21,9 +21,9 @@ case class FSDirectory( override val name:String,val files:List[FS],val backImg:
 }
 
 case class FSImage( override val name:String) extends FS{
-  println(name)
-  val globalPath = name.substring(name.lastIndexOf("imageDataset"))
-  println(globalPath)
+  println(name,"name")
+  val globalPath = name.substring(name.lastIndexOf("imageDataset")).replace(File.separator,"/")
+  println(globalPath,"globalPath")
 }
 
 

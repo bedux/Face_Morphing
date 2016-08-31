@@ -11,7 +11,7 @@ import scala.reflect.io.File
   */
 object  LandmarcFacePoint {
   import scala.sys.process._
-  val scriptPath:String =Play.getFile("libs"+File.separator+"dtest").getAbsolutePath
+  val scriptPath:String =Play.getFile("libs/win/dtest.exe").getAbsolutePath
   Play.getFile("libs"+File.separator+"dtest").setExecutable(true)
   val dataSetPath:String = Play.getFile("libs"+File.separator+"shape_predictor_68_face_landmarks.dat").getAbsolutePath
 
@@ -23,6 +23,7 @@ object  LandmarcFacePoint {
   def getFaceKeyPoint(fileName:String):LandmarkPointData = {
     val name = {
       if(fileName.indexOf("imageDataset")==0){
+        println(fileName,"quii")
           Play.getFile(fileName).getAbsolutePath
       }else{
         fileName
