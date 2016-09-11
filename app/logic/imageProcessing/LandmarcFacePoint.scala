@@ -11,6 +11,10 @@ import scala.reflect.io.File
   */
 object  LandmarcFacePoint {
   import scala.sys.process._
+
+  def default(string: String):String = string;
+  var func: String => String = default
+
   val scriptPath:String =Play.getFile("libs/win/dtest.exe").getAbsolutePath
   Play.getFile("libs"+File.separator+"dtest").setExecutable(true)
   val dataSetPath:String = Play.getFile("libs"+File.separator+"shape_predictor_68_face_landmarks.dat").getAbsolutePath
@@ -32,8 +36,12 @@ object  LandmarcFacePoint {
     }
     println(scriptPath + " "+ dataSetPath +"  " + name)
 
-    val res: String = ( scriptPath + " "+ dataSetPath +"  " + name).!!
 
+
+
+
+    val res: String = func(name)
+    println(res)
 
     val json:JsValue = Json.parse(res)
     val result = json.as[Array[Array[Array[Int]]]]
