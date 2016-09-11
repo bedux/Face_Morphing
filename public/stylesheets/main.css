@@ -53,25 +53,31 @@ html, body {
 }
 
 #Continue,#Continue1,#Continue2{
-    background-image: url("/assets/images/play.png");
+    background-image: url("/assets/images/play.svg");
     background-size:cover;
     width: 100px;
     height:100px;
 }
-
+#Continue:hover,#Continue1:hover,#Continue2:hover{
+    background-image: url("/assets/images/playBlue.svg");
+    background-size:cover;
+    width: 100px;
+    height:100px;
+}
 #Continue4{
      background-image: url("/assets/images/mail.svg");
      background-size:cover;
      width: 100px;
      height:100px;
  }
-#Continue3{
-    background-image: url("/assets/images/photographer-camera.svg");
+#Continue4:hover{
+    background-image: url("/assets/images/mailBlue.svg");
     background-size:cover;
     width: 100px;
     height:100px;
 }
-.Photo{
+
+.Photo,#Continue3{
     background-image: url("/assets/images/photographer-camera.svg");
     background-size:cover;
     width: 100px;
@@ -84,15 +90,27 @@ html, body {
     width: 100px;
     height:100px;
 }
+
+.imageGalleryIcon:hover{
+    background-image: url("/assets/images/libBlue.svg");
+    background-size:cover;
+    width: 100px;
+    height:100px;
+}
 #Plus{
     background-image: url("/assets/images/plus.svg");
     background-size:cover;
     width: 100px;
     height:100px;
 }
+#Plus:hover{
+    background-image: url("/assets/images/plusBlue.svg");
+    background-size:cover;
+    width: 100px;
+    height:100px;
+}
 
-
-.Photo:hover{
+.Photo:hover,#Continue3:hover{
     background-image: url("/assets/images/photographer-camera-red.svg");
     background-size:cover;
     width: 100px;

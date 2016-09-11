@@ -10,7 +10,7 @@
 
     <div id ="menu" class="flexRow">
         <div id = "Plus" class = "spaceAround" onclick="injectPopUpSourceSelect()"></div>
-        <div id="Continue" class="spaceAround" onclick="morphImages()"></div>
+        <div id="Continue2" class="spaceAround" onclick="morphImages()"></div>
     </div>
 </div>
 
@@ -18,12 +18,19 @@
 
     $("#selectImage").hide();
     $("#imageGallery").hide();
+    $("#Continue2").hide();
     var isInizialize = false;
     //history of navigation.
     var old =[];
 
     //Inizialize the page.
     function initSelectImage(){
+        if(sessionUpdate.length==0){
+            $("#Continue2").hide();
+        }else{
+            $("#Continue2").show();
+        }
+
         if(! isInizialize){
             getListFile(renderImages);
             isInizialize=true;
@@ -33,6 +40,7 @@
 
     //Display the content of a directory into the main container: remember that the directory contains all the HTML for display it but as display mode:None
     function display(img){
+
         old.push( document.getElementById("imgContainer").innerHTML)
         document.getElementById("imgContainer").innerHTML = $("#"+img).html()
 
@@ -42,6 +50,9 @@
     function back(){
         if(old.length>0)
             document.getElementById("imgContainer").innerHTML  = old.pop();
+       if(sessionUpdate.length == 0){
+            $("#Continue2").hide();
+        }
     }
     //render the html page. This is the callback of getListOfFile
     function renderImages(json){
@@ -52,10 +63,14 @@
 
     //when an image is selected, if is the first time make the border red and add to the list of image to be merged, otherwise remove form the list
     function selected(path,img) {
+        $("#Continue2").show();
         if (sessionUpdate.indexOf(path) != -1) {
             sessionUpdate.splice(sessionUpdate.indexOf(path), 1)
             img.style.borderStyle = "none"
             remove(path)
+            if(sessionUpdate.length==0){
+                $("#Continue2").hide();
+            }
 
         } else {
             sessionUpdate.push(path)
@@ -72,7 +87,7 @@
         $("#toBeInjected").hide();
         $("#selfieCanvas").hide();
         $("#selfie").show();
-        $("#Continue").show();
+
         $("#imageGallery").hide();
     }
 
