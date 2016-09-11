@@ -1,16 +1,34 @@
 @()
-<div id="selectImage" class="noFullHeight flexRow">
+
+<div id="imageGallery" class="fullHeight flexRowDiv">
+
+        <div id="selectImage">
+        </div>
+
+
+
+
+    <div id ="menu" class="flexRow">
+        <div id = "Plus" class = "spaceAround" onclick="injectPopUpSourceSelect()"></div>
+        <div id="Continue" class="spaceAround" onclick="morphImages()"></div>
+    </div>
+</div>
 
     <script type="text/javascript">
 
     $("#selectImage").hide();
-
+    $("#imageGallery").hide();
+    var isInizialize = false;
     //history of navigation.
     var old =[];
 
     //Inizialize the page.
     function initSelectImage(){
-        getListFile(renderImages);
+        if(! isInizialize){
+            getListFile(renderImages);
+            isInizialize=true;
+        }
+
     }
 
     //Display the content of a directory into the main container: remember that the directory contains all the HTML for display it but as display mode:None
@@ -47,10 +65,22 @@
             img.style.borderWidth = "3px"
         }
     }
+
+
+    function goForward1(){
+        $("#selectImage").hide();
+        $("#toBeInjected").hide();
+        $("#selfieCanvas").hide();
+        $("#selfie").show();
+        $("#Continue").show();
+        $("#imageGallery").hide();
+    }
+
     //Nex page
-    function goForward1() {
+    function morphImages() {
         $("#selectImage").hide();
         $("#selfie").hide();
+        $("#imageGallery").hide();
         initMorphPage()
 
         $("#morph").show();
@@ -58,6 +88,4 @@
     }
     </script>
 
-
-</div>
 

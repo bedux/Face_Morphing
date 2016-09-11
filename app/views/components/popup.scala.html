@@ -1,0 +1,9 @@
+@(id:String,title:String)(html:Html)
+
+<div id = "@id"style="position: absolute; top: 0px; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 200; display: flex ">
+        <div class="pop-up">
+            <h1 class="head">@title</h1>
+            @html
+        </div>
+</div>
+

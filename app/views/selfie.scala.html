@@ -1,29 +1,42 @@
 @()
+@components.popup("toBeInjected","Seleziona Sorgente") {
+
+        <div class="columnFlex">
+             <div id="Photo1" class="Photo spaceAround" onclick="selectCamera()"></div>
+             <div  class="imageGalleryIcon spaceAround" onclick="selectImageLibrary()"></div>
+
+        </div>
+
+}
+
+
+
 <div id="selfie" class="fullHeight flexRowDiv">
+    <div  id = "selfieCanvas" >
 
-    <h5 id="tt"></h5>
-    <div class="canvasLayer" width="640" height="480">
-        <video autoplay="true" id="videoElement" class="invisible" width="640" height="480"></video>
-        <canvas id="canvas" class="posAbs" width="640" height="480"> </canvas>
-        <canvas id="canvasHelper" class="posAbs" width="640" height="480" > </canvas>
+        <div class="canvasLayer" width="640" height="480">
+            <video autoplay="true" id="videoElement" class="invisible" width="640" height="480"></video>
+            <canvas id="canvas" class="posAbs" width="640" height="480"> </canvas>
+            <canvas id="canvasHelper" class="posAbs" width="640" height="480" > </canvas>
+
+        </div>
+
+        <div id="Photo" class="spaceAround Photo" onclick="countDown()"></div>
 
     </div>
 
-
-    <div class="flexRow">
-        <div id="Photo" class="spaceAround" onclick="countDown()"></div>
-        <div id="Continue" class="spaceAround" onclick="goForward()"></div>
+    <div id ="menu" class="flexRow">
+        <div id = "Plus" class = "spaceAround" onclick="injectPopUpSourceSelect()"></div>
+        <div id="Continue" class="spaceAround" onclick="morphImages()"></div>
     </div>
-
-
-
 </div>
 
 
 <script type="text/javascript">
 
         $("#Continue").hide();
-
+        $("#toBeInjected").hide();
+        $("#selfieCanvas").hide();
         var video = document.querySelector("#videoElement");
         var canvas = document.querySelector("#canvas");
         var canvasHelper = document.querySelector("#canvasHelper");
@@ -63,7 +76,10 @@
                     setTimeout(function () {
                         $("#Photo").css('background-image', 'url(/assets/images/photographer-camera.svg)')
                         takeAndPut(sessionUpdate);
-                        $("#Continue").show()
+                        $("#Continue").show();
+                        $("#menu").show();
+                        $("#selfieCanvas").hide();
+
                         pressed=false
 
                     },1000)
@@ -75,6 +91,17 @@
 
 
 
+        function selectCamera(){
+            pressed = false;
+            stop = false;
+            $("#toBeInjected").hide();
+            $("#selfieCanvas").show();
+            $("#menu").hide();
+            $("#selectImage").hide();
+            $("#imageGallery").hide();
+            $("#selfie").show();
+        }
+
 
         //next page
         function goForward(){
@@ -82,7 +109,20 @@
             $("#morph").hide();
             $("#selfie").hide();
             $("#selectImage").show();
-
+            $("#imageGallery").show();
             initSelectImage();
         }
+
+        function injectPopUpSourceSelect(){
+
+            $("#toBeInjected").show();
+        }
+        function selectImageLibrary() {
+            $("#toBeInjected").hide();
+            goForward();
+        }
+
+
+
+
 </script>
