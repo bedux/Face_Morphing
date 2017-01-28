@@ -14,6 +14,8 @@
 <div id="selfie" class="fullHeight flexRowDiv">
     <div  id = "selfieCanvas" >
 
+
+        <div id="Number" ></div>
         <div class="canvasLayer" width="640" height="480">
             <video autoplay="true" id="videoElement" class="invisible" width="640" height="480"></video>
             <canvas id="canvas" class="posAbs" width="640" height="480"> </canvas>
@@ -21,12 +23,16 @@
 
         </div>
 
-        <div id="Photo" class="spaceAround Photo" onclick="countDown()"></div>
 
     </div>
 
     <div id ="menu" class="flexRow">
-        <div id = "Plus" class = "spaceAround" onclick="injectPopUpSourceSelect()"></div>
+        @*<div id = "Plus" class = "spaceAround" onclick="injectPopUpSourceSelect()"></div>*@
+        @*<div id="Photo1" class="Photo spaceAround" onclick="selectCamera()"></div>*@
+        <div id="Photo" class="spaceAround Photo" onclick="countDown()"></div>
+
+        <div  class="imageGalleryIcon spaceAround" onclick="selectImageLibrary()"></div>
+
         <div id="Continue" class="spaceAround" onclick="morphImages()"></div>
     </div>
 </div>
@@ -36,7 +42,7 @@
 
         $("#Continue").hide();
         $("#toBeInjected").hide();
-        $("#selfieCanvas").hide();
+//        $("#selfieCanvas").hide();
         var video = document.querySelector("#videoElement");
         var canvas = document.querySelector("#canvas");
         var canvasHelper = document.querySelector("#canvasHelper");
@@ -53,9 +59,9 @@
         var h = canvas.height;
 
         //draw ellipse for face
-        context.ellipse(w/2,h/2,w/3,h/2-10,0,0,360);
+        context.ellipse(w/2,h/2,200,200,0,0,360);
         context.lineWidth = 5;
-        context.strokeStyle = 'green';
+        context.strokeStyle = '#5ac3e2';
         context.stroke();
 
 
@@ -65,22 +71,28 @@
             if(pressed) return;
             if(stop) {stop = false;return;}
             pressed = true;
-            $("#Photo").css('background-image','url(/assets/images/number-three-in-a-circle.svg)')
+            $("#Number").css('background-image','url(/assets/images/number-three-in-a-circle.svg)')
             setTimeout(function () {
 
-                $("#Photo").css('background-image','url(/assets/images/number-two-in-a-circle.svg)')
+                $("#Number").css('background-image','url(/assets/images/number-two-in-a-circle.svg)')
 
                 setTimeout(function () {
-                    $("#Photo").css('background-image', 'url(/assets/images/number-one-in-a-circle.svg)')
+                    $("#Number").css('background-image', 'url(/assets/images/number-one-in-a-circle.svg)')
+                    context.ellipse(w/2,h/2,200,200,0,0,360);
+                    context.lineWidth = 5;
+                    context.strokeStyle = '#ffd938';
+                    context.stroke();
 
                     setTimeout(function () {
-                        $("#Photo").css('background-image', 'url(/assets/images/photographer-camera.svg)')
                         takeAndPut(sessionUpdate);
                         $("#Continue").show();
                         $("#menu").show();
-                        $("#selfieCanvas").hide();
+//                        $("#selfieCanvas").hide();
 
                         pressed=false
+                        $("#Number").css('background-image', '')
+
+
 
                     },1000)
 

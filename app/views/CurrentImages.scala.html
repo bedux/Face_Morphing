@@ -1,8 +1,7 @@
 @()
 
     <div id="ImageSelected">
-        <div class="imageDiv" style="height: 100%; background: whitesmoke; left:0px; margin-left: 0px; padding-left: 10px;     align-self:center;">
-            <h4>Immagini Selezionate:</h4>
+        <div class="imageDiv" id="Template" style="width: 100px; height: 75px;  background: #9d9a99;  margin-left: 30px; padding-left: 10px;     align-self:center;">
         </div>
 
     </div>
@@ -19,11 +18,16 @@
             '</div>');
             elemens[path] = [nImg,img,false]
             $("#ImageSelected").append(nImg)
+            $("#Template").hide();
         }
 
         //remove image by press on the selectImage
         function remove(path) {
             elemens[path][0].hide()
+            if(sessionUpdate.length==0){
+                $("#Template").show();
+
+            }
         }
 
         //remove image by  press on the bar
@@ -34,17 +38,26 @@
 
         //remove a row image (selfie)
         function removeRaw(name){
-            sessionUpdate.splice(sessionUpdate.indexOf(name),1)
+            console.log(name);
             elemens[name][0].hide()
+            sessionUpdate.splice(sessionUpdate.indexOf(name),1)
+        if(sessionUpdate.length==0){
+            $("#Template").show();
+
+        }
         }
 
         //add a row image (selfie)
         function addRowImage(raw,name){
-            var nImg =   $('<div class="imageDiv" onclick=removeRaw("'+name+'") >'+
+            name=name.split('\\').join('/');
+            console.log(name)
+            var nImg =   $('<div class="imageDiv" onclick=removeRaw(\''+name+'\') >'+
                     '<img src="'+raw+' ">'+
                     '</div>');
             elemens[name] = [nImg,name,false]
             $("#ImageSelected").append(nImg)
+            $("#Template").hide();
+
         }
 
 </script>

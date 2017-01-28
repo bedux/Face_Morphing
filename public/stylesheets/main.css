@@ -3,6 +3,7 @@ html, body {
     height: 100%;
     padding: 0px;
     margin: 0px;
+    background: #9d9a99;
 }
 
 .fullHeight{
@@ -185,7 +186,7 @@ html, body {
     display: flex;
     flex-direction: row;
     width: 100%;
-    background-color: #a6a3a4;
+    background-color: #dadad9;
     align-self: flex-end;
     overflow-y: scroll;
     flex:  0.1 1 auto;
@@ -283,4 +284,15 @@ html, body {
 #selectImage img{
 margin: 15px;
 
+}
+
+#selfieCanvas{
+    display: flex;
+    flex-direction: row;
+}
+
+#Number{
+    width:40px;
+    height:40px;
+    background-size: cover;
 }
